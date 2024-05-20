@@ -45,7 +45,6 @@ int main(){
                 break;
             case 5:
                 printf("Closing.");
-                //deleteAllContact(head);
                 return 0;
                 break;
             default:
@@ -56,18 +55,23 @@ int main(){
 
 node* search(node *ptr){
     char src[L];
+    node *tmp = NULL;
+    tmp = ptr;
     getContact("Search for: ", src);
-    while (ptr->sx != NULL){
-        if (strcmp(src, ptr->name) == 0 || strcmp(src, ptr->number) == 0){
-            return ptr;
+    while (tmp != NULL){
+        if (strcmp(src, tmp->name) == 0 || strcmp(src, tmp->number) == 0){
+            return tmp;
             break;
         }
-        else{
-            ptr = ptr->sx;
+        else if (tmp->sx != NULL){
+            tmp = tmp->sx;
+        }
+        else {
+            printf(" ");
+            break;
         }
     }
-    ptr = NULL;
-    return ptr;
+
 }
 
 void printContact(node *ptr){
@@ -162,23 +166,28 @@ void getContact(char *q, char *a){
 void deleteContact(node *ptr){
     node *trg = NULL;
     trg = search(ptr);
-    if(trg->sx == NULL && trg->dx == NULL){
-        free(trg);
-    }
-    else if(trg->dx == NULL){
-        trg->sx->dx = NULL;
-        free(trg);
-    }
-    else if(trg->sx == NULL){
-        trg->dx->sx = NULL;
-        free(trg);
+    if (trg != NULL){
+        if(trg->sx == NULL && trg->dx == NULL){
+            free(trg);
+        }
+        else if(trg->dx == NULL){
+            trg->sx->dx = NULL;
+            free(trg);
+        }
+        else if(trg->sx == NULL){
+            trg->dx->sx = NULL;
+            free(trg);
+        }
+        else{
+            trg->sx->dx = trg->dx;
+            trg->dx->sx = trg->sx;
+            free(trg);
+        }
+        printf("Contact deleted\n");
     }
     else{
-        trg->sx->dx = trg->dx;
-        trg->dx->sx = trg->sx;
-        free(trg);
+        printf("Contact not found\n");
     }
-    printf("Contact deleted\n");
 }
 
 node* target(node *tmp, node *ptr){
