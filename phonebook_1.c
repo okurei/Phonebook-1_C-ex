@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 const int L = 50;
 
@@ -13,6 +14,8 @@ typedef struct node
     struct node *dx;
 }
 node;
+
+
 
 node* search(node *ptr);
 void printContact(node *ptr);
@@ -28,7 +31,8 @@ int getInstruction();
 int main(){
     node *head = NULL;
 
-    while(1){
+    bool i = true;
+    while(i){
         int op = getInstruction();
         switch(op){
             case 1:
@@ -45,7 +49,7 @@ int main(){
                 break;
             case 5:
                 printf("Closing.");
-                return 0;
+                i = false;
                 break;
             default:
                 printf("Invalid selection. ");
@@ -53,6 +57,10 @@ int main(){
     }
 }
 
+/**
+ * Search and return a node
+ * @return
+*/
 node* search(node *ptr){
     char src[L];
     node *tmp = NULL;
@@ -61,19 +69,21 @@ node* search(node *ptr){
     while (tmp != NULL){
         if (strcmp(src, tmp->name) == 0 || strcmp(src, tmp->number) == 0){
             return tmp;
-            break;
         }
         else if (tmp->sx != NULL){
             tmp = tmp->sx;
         }
         else {
-            printf(" ");
-            break;
+            return NULL;
         }
     }
 
 }
 
+/**
+ * Call search and print the node
+ * @return
+*/
 void printContact(node *ptr){
     node *tmp = NULL;
     tmp = search(ptr);
@@ -86,6 +96,10 @@ void printContact(node *ptr){
     }
 }
 
+/**
+ * Print all node
+ * @return
+*/
 void printContacts(node *ptr){
     node *tmp = NULL;
     tmp = ptr;
@@ -96,6 +110,10 @@ void printContacts(node *ptr){
     }
 }
 
+/**
+ * Allocate a new node
+ * @return
+*/
 node* new(node *ptr){
     node *tmp = malloc(sizeof(node));
     char a1[L];
@@ -114,7 +132,13 @@ node* new(node *ptr){
         ptr = tmp;
         return ptr;
     }
+    /**
+     * Add the node to the sorted list
+    */
     node *trg = target(tmp, ptr);
+    if (trg == NULL){
+        return ptr;
+    }
     if (trg->dx == NULL)
     {
         if(strcmp(tmp->name, trg->name) > 0){
@@ -154,6 +178,10 @@ node* new(node *ptr){
     }
 }
 
+/**
+ * Get a contact from user input, print the prompt char *q
+ * @return
+*/
 void getContact(char *q, char *a){
     printf("%s", q);
     fgets(a, L, stdin);
@@ -163,6 +191,10 @@ void getContact(char *q, char *a){
     }
 }
 
+/**
+ * Call search and delete the contact if found
+ * @return
+*/
 void deleteContact(node *ptr){
     node *trg = NULL;
     trg = search(ptr);
@@ -189,17 +221,28 @@ void deleteContact(node *ptr){
         printf("Contact not found\n");
     }
 }
-
+/**
+ * Compare node by name and return the bigger node or the tail
+ * @return
+*/
 node* target(node *tmp, node *ptr){
     if (strcmp(tmp->name, ptr->name) < 0 || ptr->sx == NULL){
         return ptr;
-        }
+    }
+    else if (strcmp(tmp->name, ptr->name) == 0){
+        printf("Contact already exist\n");
+        free(tmp);
+        return NULL;
+    }
     else{
         ptr = ptr->sx;
         ptr = target(tmp, ptr);
     }
 }
 
+/**
+ * take the iteger from the user input and return it. 
+*/
 int getInstruction(){
     int op;
     printf("Please, select one of the following option:\n1 to print a contact\n2 to add a new contact\n3 to delete a contact,\n4 to print all the contact\n5 to close the phone book\n");
