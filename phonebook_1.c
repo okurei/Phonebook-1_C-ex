@@ -193,6 +193,8 @@ void getContact(char *q, char *a){
 
 /**
  * Call search and delete the contact if found
+ * Some problem with the delete function
+ * todo remove the empty node from the list
  * @return
 */
 void deleteContact(node *ptr){
